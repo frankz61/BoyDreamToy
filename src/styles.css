@@ -2,9 +2,16 @@
 html, body { min-height: 100%; }
 body {
   font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 16px;
   background: #020617;
   color: #e2e8f0;
   -webkit-text-size-adjust: 100%;
+}
+
+/* 横屏 / 矮屏：收紧战斗区间距，尽量整屏展示 */
+@media (orientation: landscape) and (max-height: 560px) {
+  #root { padding: 6px 10px; }
+  .battle { gap: 6px !important; }
 }
 /* 流式宽度：手机占满，平板/桌面居中且不过宽 */
 #root { width: 100%; max-width: 820px; margin: 0 auto; padding: clamp(8px, 2.5vw, 16px); }

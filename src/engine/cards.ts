@@ -17,4 +17,11 @@ export const CARD_POOL: Card[] = [
   { id: "ground2", name: "耿鬼", type: "地", maxHp: 88, image: "/cards/ground2.jpg", skills: [{ name: "暗影潜袭", type: "地", power: 34 }, { name: "次元吞噬", type: "草", power: 24 }] },
   { id: "wind1", name: "阿尔宙斯", type: "风", maxHp: 80, image: "/cards/wind1.jpg", skills: [{ name: "极光增辉", type: "风", power: 36 }, { name: "超时空回溯", type: "电", power: 26 }] },
   { id: "wind2", name: "雷电云·天空", type: "风", maxHp: 92, image: "/cards/wind2.jpg", skills: [{ name: "天空威赫", type: "风", power: 34 }, { name: "疾风震雷", type: "草", power: 26 }] },
+  // —— 第二批卡面（new_cards），各属性各补 1 只 ——
+  { id: "elec3", name: "齿轮怪", type: "电", maxHp: 76, image: "/cards/elec3.jpg", skills: [{ name: "钢铁闪击", type: "电", power: 36 }, { name: "三重磁力冲撞", type: "地", power: 28 }] },
+  { id: "water3", name: "水井面具", type: "水", maxHp: 96, image: "/cards/water3.jpg", skills: [{ name: "太晶蓝洪", type: "水", power: 35 }, { name: "千军横扫", type: "地", power: 26 }] },
+  { id: "ground3", name: "拖拖蚓", type: "地", maxHp: 112, image: "/cards/ground3.jpg", skills: [{ name: "重金碾压", type: "地", power: 36 }, { name: "暴乱合金拳", type: "电", power: 26 }] },
+  { id: "fire3", name: "小火马", type: "火", maxHp: 74, image: "/cards/fire3.jpg", skills: [{ name: "火热一闪", type: "火", power: 32 }, { name: "火速冲刺", type: "风", power: 24 }] },
+  { id: "wind3", name: "秃鹰丫头", type: "风", maxHp: 72, image: "/cards/wind3.jpg", skills: [{ name: "锐利羽", type: "风", power: 32 }, { name: "乱击", type: "地", power: 24 }] },
+  { id: "grass3", name: "萨戮德", type: "草", maxHp: 92, image: "/cards/grass3.jpg", skills: [{ name: "极巨暴乱藤蔓", type: "草", power: 36 }, { name: "暗袭要害", type: "地", power: 26 }] },
 ];
