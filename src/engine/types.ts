@@ -17,6 +17,7 @@ export interface Card {
   type: ElementType;
   maxHp: number;
   skills: Skill[];
+  image: string; // 卡面图片路径（public/ 下，运行时以 / 开头访问）
 }
 
 /** 进入对战后的实例（带当前血量、唯一 uid） */

@@ -9,3 +9,31 @@ body {
 /* 流式宽度：手机占满，平板/桌面居中且不过宽 */
 #root { width: 100%; max-width: 820px; margin: 0 auto; padding: clamp(8px, 2.5vw, 16px); }
 button { font-family: inherit; }
+
+/* —— 出击 / 受击特效 —— */
+@keyframes fxAttack {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-12px) scale(1.07); }
+  60% { transform: translateY(2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes fxHurt {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px) rotate(-1.5deg); }
+  35% { transform: translateX(7px) rotate(1.5deg); }
+  55% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+@keyframes fxFlash { 0% { opacity: 0.75; } 100% { opacity: 0; } }
+@keyframes fxDmg {
+  0% { transform: scale(0.3); opacity: 0; }
+  35% { transform: scale(1.35); opacity: 1; }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fxSlash {
+  0% { opacity: 0; transform: translateX(-40%) scaleX(0.2) skewX(-18deg); }
+  45% { opacity: 0.95; transform: translateX(0) scaleX(1) skewX(-18deg); }
+  100% { opacity: 0; transform: translateX(40%) scaleX(1) skewX(-18deg); }
+}
+@keyframes fxStageFlash { 0% { opacity: 0.5; } 100% { opacity: 0; } }

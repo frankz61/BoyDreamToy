@@ -12,7 +12,7 @@ import {
   calcDamage,
 } from "../engine";
 import type { BattleState, Card, Skill } from "../engine";
-import { TYPE_META, TypeBadge, HpBar, MonChip } from "./components";
+import { TYPE_META, TypeBadge, MonChip, type Fx } from "./components";
 
 type Screen = "home" | "select" | "battle" | "stageWin" | "gameWin" | "gameOver";
 
@@ -25,8 +25,21 @@ export default function App() {
   const [picked, setPicked] = useState<number[]>([]);
   const [match, setMatch] = useState<BattleState | null>(null);
   const [busy, setBusy] = useState(false);
+  const [fxKey, setFxKey] = useState(0); // 每次出招自增，用于重放出击/受击动画
 
   const stage = STAGES[stageIdx];
+
+  /** 根据最近一次命中，判断某只精灵当前该播放的特效 */
+  const fxFor = (side: "player" | "ai", idx: number): Fx => {
+    if (!match || !match.lastHit) return undefined;
+    const atkSide = match.lastHit.side;
+    const defSide = atkSide === "player" ? "ai" : "player";
+    const atkIdx = atkSide === "player" ? match.playerActive : match.aiActive;
+    const defIdx = defSide === "player" ? match.playerActive : match.aiActive;
+    if (side === atkSide && idx === atkIdx) return "attack";
+    if (side === defSide && idx === defIdx) return "hurt";
+    return undefined;
+  };
 
   const startCampaign = () => {
     setStageIdx(0);
@@ -55,6 +68,7 @@ export default function App() {
     if (!match || busy || match.winner) return;
     const afterPlayer = applyTurn(match, "player", skill);
     setMatch(afterPlayer);
+    setFxKey((k) => k + 1);
 
     if (afterPlayer.winner === "player") {
       setBusy(true);
@@ -69,6 +83,7 @@ export default function App() {
       const aiSkill = stage.aiSmart ? aiChooseSkill(aiMon, target.type) : randomSkill(aiMon);
       const afterAi = applyTurn(afterPlayer, "ai", aiSkill);
       setMatch(afterAi);
+      setFxKey((k) => k + 1);
       if (afterAi.winner === "ai") {
         setTimeout(() => endBattle("ai"), 700);
       } else {
@@ -141,7 +156,10 @@ export default function App() {
             {hand.map((c, i) => {
               const sel = picked.includes(i);
               return (
-                <button key={i} onClick={() => togglePick(i)} style={{ textAlign: "left", cursor: "pointer", borderRadius: 12, padding: 12, background: sel ? "rgba(56,189,248,0.15)" : "rgba(255,255,255,0.05)", border: sel ? "2px solid #38bdf8" : "2px solid rgba(255,255,255,0.08)", color: "#e2e8f0", transition: "all 0.2s" }}>
+                <button key={i} onClick={() => togglePick(i)} style={{ textAlign: "left", cursor: "pointer", borderRadius: 12, padding: 10, background: sel ? "rgba(56,189,248,0.15)" : "rgba(255,255,255,0.05)", border: sel ? "2px solid #38bdf8" : "2px solid rgba(255,255,255,0.08)", color: "#e2e8f0", transition: "all 0.2s" }}>
+                  <div style={{ aspectRatio: "3 / 4", borderRadius: 8, overflow: "hidden", marginBottom: 8, background: "rgba(0,0,0,0.3)" }}>
+                    <img src={c.image} alt={c.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <span style={{ fontWeight: 700, fontSize: 14 }}>{c.name}</span>
                     <TypeBadge type={c.type} />
@@ -169,17 +187,22 @@ export default function App() {
         <div>
           <div style={{ fontSize: 12, color: "rgba(226,232,240,0.55)", marginBottom: 6 }}>对手队伍</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 16 }}>
-            {match.aiTeam.map((m, i) => <MonChip key={m.uid} mon={m} active={i === match.aiActive && m.curHp > 0} />)}
+            {match.aiTeam.map((m, i) => {
+              const fx = fxFor("ai", i);
+              return <MonChip key={fx ? `${m.uid}-${fxKey}` : m.uid} mon={m} active={i === match.aiActive && m.curHp > 0} fx={fx} />;
+            })}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 70, gap: 4, marginBottom: 14 }}>
+          <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 84, gap: 4, marginBottom: 14, overflow: "hidden" }}>
             {match.lastHit ? (
-              <>
-                <div style={{ fontSize: 26, fontWeight: 900, color: match.lastHit.side === "player" ? "#fca5a5" : "#fcd34d" }}>-{match.lastHit.damage}</div>
+              <div key={fxKey} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                {/* 斜划光刃特效 */}
+                <div style={{ position: "absolute", left: 0, right: 0, top: "50%", height: 8, marginTop: -4, background: `linear-gradient(90deg, transparent, ${match.lastHit.side === "player" ? "#fca5a5" : "#fcd34d"}, transparent)`, animation: "fxSlash 0.5s ease forwards", pointerEvents: "none" }} />
+                <div style={{ fontSize: 32, fontWeight: 900, color: match.lastHit.side === "player" ? "#fca5a5" : "#fcd34d", animation: "fxDmg 0.5s ease", textShadow: "0 2px 10px rgba(0,0,0,0.55)" }}>-{match.lastHit.damage}</div>
                 {effLabel(match.lastHit.mult) && (
                   <div style={{ fontSize: 14, fontWeight: 800, color: match.lastHit.mult >= 2 ? "#4ade80" : "#94a3b8" }}>{effLabel(match.lastHit.mult)}</div>
                 )}
-              </>
+              </div>
             ) : (
               <div style={{ color: "rgba(226,232,240,0.4)", fontSize: 13 }}>选择一个技能出招</div>
             )}
@@ -187,7 +210,10 @@ export default function App() {
 
           <div style={{ fontSize: 12, color: "rgba(226,232,240,0.55)", marginBottom: 6 }}>你的队伍</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 14 }}>
-            {match.playerTeam.map((m, i) => <MonChip key={m.uid} mon={m} active={i === match.playerActive && m.curHp > 0} />)}
+            {match.playerTeam.map((m, i) => {
+              const fx = fxFor("player", i);
+              return <MonChip key={fx ? `${m.uid}-${fxKey}` : m.uid} mon={m} active={i === match.playerActive && m.curHp > 0} fx={fx} />;
+            })}
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 }}>
