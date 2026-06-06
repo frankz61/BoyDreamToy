@@ -94,14 +94,14 @@ export default function App() {
         minHeight: 560,
         background: "radial-gradient(1200px 500px at 50% -10%, #1e293b 0%, #0f172a 55%, #020617 100%)",
         borderRadius: 16,
-        padding: 20,
+        padding: "clamp(12px, 3vw, 20px)",
       }}
     >
       {/* 顶栏 + 关卡进度 */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Swords size={20} color="#38bdf8" />
-          <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: 1 }}>属性对决 · 闯关</span>
+          <span style={{ fontWeight: 800, fontSize: "clamp(15px, 4.2vw, 18px)", letterSpacing: 1 }}>属性对决 · 闯关</span>
         </div>
         {screen !== "home" && (
           <button onClick={reset} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)", border: "none", color: "#cbd5e1", borderRadius: 8, padding: "6px 12px", fontSize: 13, cursor: "pointer" }}>
@@ -137,7 +137,7 @@ export default function App() {
             <span style={{ fontWeight: 700 }}>第 {stage.id} 关 · {stage.name} — 选 {stage.teamSize} 只</span>
             <span style={{ color: "#38bdf8", fontWeight: 700 }}>已选 {picked.length} / {stage.teamSize}</span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 10 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(116px, 1fr))", gap: 10 }}>
             {hand.map((c, i) => {
               const sel = picked.includes(i);
               return (
@@ -190,7 +190,7 @@ export default function App() {
             {match.playerTeam.map((m, i) => <MonChip key={m.uid} mon={m} active={i === match.playerActive && m.curHp > 0} />)}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 }}>
             {match.playerTeam[match.playerActive].skills.map((s, k) => {
               const target = match.aiTeam[match.aiActive];
               const { damage, mult } = calcDamage(s, target.type);
