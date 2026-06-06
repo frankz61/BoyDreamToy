@@ -5,4 +5,4 @@ dist
 .DS_Store
 
 # 卡面原图（已复制并重命名到 public/cards/ 供应用使用，原图不入库）
-/cards/
+cards
